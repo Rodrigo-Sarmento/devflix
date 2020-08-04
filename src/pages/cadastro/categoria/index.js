@@ -2,6 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import PageDefault from '../../../components/PageDefault';
 import FormField from '../../../components/FormField';
+import useForm from '../../../hooks/useForm';
+import Button from '../../../components/Button';
+
+
 
 function CadastroCategoria() {
   const valoresIniciais = {
@@ -9,39 +13,23 @@ function CadastroCategoria() {
     descricao: '',
     cor: '',
   };
+
+  const { handleChange, values, clearForm }= useForm(valoresIniciais);
   const [categorias, setCategorias] = useState([]);
-  const [values, setValues] = useState(valoresIniciais);
+ 
 
-  function setValue(chave, valor) {
-    // chave: nome, descricao, bla, bli
-    setValues({
-      ...values,
-      [chave]: valor, // nome: 'valor'
-    });
-  }
 
-  function handleChange(infosDoEvento) {
-    setValue(
-      infosDoEvento.target.getAttribute('name'),
-      infosDoEvento.target.value,
-    );
-  }
-
-  // ============
-
-  useEffect(() => {
-    if (window.location.href.includes('localhost')) {
-      const URL = 'http://localhost:8080/categorias';
+  useEffect(() => {   
+      const URL = window.location.hostname.includes('localhost')
+      ?'http://localhost:8080/categorias'
+      :'https://dev--flix.herokuapp.com/categorias';
       fetch(URL)
-        .then(async (respostaDoServer) => {
-          if (respostaDoServer.ok) {
-            const resposta = await respostaDoServer.json();
-            setCategorias(resposta);
-            return;
-          }
-          throw new Error('Não foi possível pegar os dados');
+        .then(async (respostaDoServidor) => {
+          const resposta = await respostaDoServidor.json();
+          setCategorias([
+            ...resposta,
+          ])
         });
-    }
   }, []);
 
   return (
@@ -59,7 +47,7 @@ function CadastroCategoria() {
           values,
         ]);
 
-        setValues(valoresIniciais);
+        clearForm(valoresIniciais);
       }}
       >
 
@@ -88,9 +76,9 @@ function CadastroCategoria() {
         />
        
 
-        <button type="submit">
+        <Button>
           Cadastrar
-        </button>
+        </Button>
       </form>
 
       <ul>
