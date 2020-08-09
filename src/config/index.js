@@ -1,7 +1,8 @@
-const URL_BACKEND_TOP = window.location.hostname.includes('localhost')
-? 'http://localhost:8080'
-:'https://https://dev--flix.herokuapp.com';
+const URL_BACKEND_TOP =
+  process.env.NODE_ENV === 'development'
+    ? 'http://localhost:8080'
+    : 'https://dev--flix.herokuapp.com'
 
 export default {
-    URL_BACKEND_TOP,
-};
+  URL_BACKEND_TOP
+}
